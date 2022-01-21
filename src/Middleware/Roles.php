@@ -1,12 +1,12 @@
 <?php
 
-namespace Lghs\KeycloakWebGuard\Middleware;
+namespace Lghs\KeycloakGuard\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
-use Lghs\KeycloakWebGuard\Exceptions\KeycloakRolesException;
+use Lghs\KeycloakGuard\Exceptions\RolesException;
 
-class KeycloakRoles extends KeycloakAuthenticated
+class Roles extends Authenticate
 {
     /**
      * Handle an incoming request.
@@ -27,7 +27,7 @@ class KeycloakRoles extends KeycloakAuthenticated
             return $next($request);
         }
 
-        throw new KeycloakRolesException(
+        throw new RolesException(
             'Unauthenticated.', $guards, $this->redirectTo($request)
         );
     }

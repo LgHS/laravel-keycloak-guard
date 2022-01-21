@@ -1,6 +1,6 @@
 <?php
 
-namespace Lghs\KeycloakWebGuard;
+namespace Lghs\KeycloakGuard;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
@@ -9,14 +9,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Lghs\KeycloakWebGuard\Auth\Guard\Keycloak;
-use Lghs\KeycloakWebGuard\Auth\UserProvider;
-use Lghs\KeycloakWebGuard\Middleware\Authenticate;
-use Lghs\KeycloakWebGuard\Middleware\Roles;
-use Lghs\KeycloakWebGuard\Models\User;
-use Lghs\KeycloakWebGuard\Services\KeycloakService;
+use Lghs\KeycloakGuard\Auth\Guard\KeycloakGuard;
+use Lghs\KeycloakGuard\Auth\UserProvider;
+use Lghs\KeycloakGuard\Middleware\Authenticate;
+use Lghs\KeycloakGuard\Middleware\Roles;
+use Lghs\KeycloakGuard\Services\KeycloakService;
 
-class KeycloakWebGuardServiceProvider extends ServiceProvider
+class KeycloakServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
@@ -52,7 +51,7 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
         // Keycloak Web Guard
         Auth::extend('keycloak', function ($app, $name, array $config) {
             $provider = Auth::createUserProvider($config['provider']);
-            return new Keycloak($provider, $app->request);
+            return new KeycloakGuard($provider, $app->request);
         });
 
         // Facades
@@ -88,7 +87,6 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
         $defaults = [
             'login' => 'login',
             'logout' => 'logout',
-            'register' => 'register',
             'callback' => 'callback',
         ];
 
@@ -98,20 +96,20 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
         // Register Routes
         $router = $this->app->make('router');
 
-        if (! empty($routes['login'])) {
-            $router->middleware('web')->get($routes['login'], 'Lghs\KeycloakWebGuard\Controllers\AuthController@login')->name('keycloak.login');
+        if (!empty($routes['login'])) {
+            $router->middleware('web')->get($routes['login'], 'Lghs\KeycloakGuard\Http\Controllers\AuthController@login')->name('keycloak.login');
         }
 
-        if (! empty($routes['logout'])) {
-            $router->middleware('web')->get($routes['logout'], 'Lghs\KeycloakWebGuard\Controllers\AuthController@logout')->name('keycloak.logout');
+        if (!empty($routes['logout'])) {
+            $router->middleware('web')->get($routes['logout'], 'Lghs\KeycloakGuard\Http\Controllers\AuthController@logout')->name('keycloak.logout');
         }
 
-        if (! empty($routes['register'])) {
-            $router->middleware('web')->get($routes['register'], 'Lghs\KeycloakWebGuard\Controllers\AuthController@register')->name('keycloak.register');
+        if (!empty($routes['register'])) {
+            $router->middleware('web')->get($routes['register'], 'Lghs\KeycloakGuard\Http\Controllers\AuthController@register')->name('keycloak.register');
         }
 
-        if (! empty($routes['callback'])) {
-            $router->middleware('web')->get($routes['callback'], 'Lghs\KeycloakWebGuard\Controllers\AuthController@callback')->name('keycloak.callback');
+        if (!empty($routes['callback'])) {
+            $router->middleware('web')->get($routes['callback'], 'Lghs\KeycloakGuard\Http\Controllers\AuthController@callback')->name('keycloak.callback');
         }
     }
 }

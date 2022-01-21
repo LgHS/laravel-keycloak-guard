@@ -1,11 +1,11 @@
 <?php
 
-namespace Lghs\KeycloakWebGuard\Models;
+namespace Lghs\KeycloakGuard\Models;
 
 use Auth;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class KeycloakUser implements Authenticatable
+class User implements Authenticatable
 {
     /**
      * Attributes we retrieve from Profile
@@ -84,7 +84,7 @@ class KeycloakUser implements Authenticatable
     /**
      * Check user has roles
      *
-     * @see KeycloakWebGuard::hasRole()
+     * @see Keycloak::hasRole()
      *
      * @param  string|array  $roles
      * @param  string  $resource

@@ -1,10 +1,10 @@
 <?php
 
-namespace Lghs\KeycloakWebGuard\Exceptions;
+namespace Lghs\KeycloakGuard\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
 
-class KeycloakRolesException extends AuthenticationException
+class RolesException extends AuthenticationException
 {
     /**
      * Keycloak Callback Error

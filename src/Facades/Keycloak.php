@@ -1,6 +1,6 @@
 <?php
 
-namespace Lghs\KeycloakWebGuard\Facades;
+namespace Lghs\KeycloakGuard\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static getUserProfile(array $credentials)
  * @method static forgetToken()
  */
-class KeycloakWeb extends Facade
+class Keycloak extends Facade
 {
     /**
      * Get the registered name of the component.

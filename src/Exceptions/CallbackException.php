@@ -1,8 +1,8 @@
 <?php
 
-namespace Lghs\KeycloakWebGuard\Exceptions;
+namespace Lghs\KeycloakGuard\Exceptions;
 
-class KeycloakCallbackException extends \RuntimeException
+class CallbackException extends \RuntimeException
 {
     /**
      * Keycloak Callback Error

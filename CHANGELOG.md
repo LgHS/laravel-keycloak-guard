@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+### [3.0.0] - 2022-01-21
+
+* Add guest redirection to config
+
 ### [2.3.2] - 2020-01-27
 
 * Support to Guzzle 7

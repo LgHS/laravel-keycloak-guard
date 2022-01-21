@@ -1,10 +1,10 @@
 <?php
 
-namespace Lghs\KeycloakWebGuard\Auth;
+namespace Lghs\KeycloakGuard\Auth;
 
 use Exception;
 
-class KeycloakAccessToken
+class AccessToken
 {
     /**
      * @var string

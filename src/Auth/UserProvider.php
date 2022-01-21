@@ -1,12 +1,12 @@
 <?php
 
-namespace Lghs\KeycloakWebGuard\Auth;
+namespace Lghs\KeycloakGuard\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\UserProvider;
-use Lghs\KeycloakWebGuard\Models\KeycloakUser;
+use Illuminate\Contracts\Auth\UserProvider as ExtendedUserProvider;
+use Lghs\KeycloakGuard\Models\User;
 
-class KeycloakWebUserProvider implements UserProvider
+class UserProvider implements ExtendedUserProvider
 {
     /**
      * The user model.

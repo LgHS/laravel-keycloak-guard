@@ -1,9 +1,4 @@
-<p align="center">
-    <img src="https://img.shields.io/packagist/v/vizir/laravel-keycloak-web-guard.svg" />
-    <img src="https://img.shields.io/packagist/dt/vizir/laravel-keycloak-web-guard.svg" />
-</p>
-
-# Keycloak Web Guard for Laravel
+# Keycloak Guard for Laravel
 
 This packages allow you authenticate users with [Keycloak Server](https://www.keycloak.org).
 
@@ -18,7 +13,7 @@ It works on front. For APIs we recommend [laravel-keycloak-guard](https://github
 
 This package was tested with:
 
-* Laravel: 5.8 / 7
+* Laravel: 5.8 / 7 / 8
 * Keycloak: 4.8.3.Final / 11.0.2
 
 Any other version is not guaranteed to work.
@@ -33,28 +28,31 @@ Any other version is not guaranteed to work.
 1. We store it on session and validate user.
 1. User is logged.
 1. We redirect the user to "redirect_url" route (see config) or the intended one.
+1. We redirect the guest to "redirect_guest" route (see config).
 
 ## Install
 
 Require the package
 
 ```
-composer require vizir/laravel-keycloak-web-guard
+composer require lghs/laravel-keycloak-guard
 ```
 
 If you want to change routes or the default values for Keycloak, publish the config file:
 
 ```
-php artisan vendor:publish  --provider="Vizir\KeycloakWebGuard\KeycloakWebGuardServiceProvider"
+php artisan vendor:publish  --provider="Lghs\KeycloakGuard\KeycloakServiceProvider"
 
 ```
 
 ## Configuration
 
-After publishing `config/keycloak-web.php` file, you can change the routes:
+After publishing `config/keycloak.php` file, you can change the routes:
 
 ```php
 'redirect_url' => '/admin',
+
+'redirect_guest' => 'hello',
 
 'routes' => [
     'login' => 'login',
@@ -100,20 +98,20 @@ We can cache the OpenId Configuration: it's a list of endpoints we require to Ke
 
 If you activate it, *remember to flush the cache* when change the realm or url.
 
-Just add the options you would like as an array to the" to "Just add the options you would like to guzzle_options array on keycloak-web.php config file. For example:
+Just add the options you would like as an array to the" to "Just add the options you would like to guzzle_options array on keycloak.php config file. For example:
 
 ## Laravel Auth
 
 You should add Keycloak Web guard to your `config/auth.php`.
 
-Just add **keycloak-web** to "driver" option on configurations you want.
+Just add **keycloak** to "driver" option on configurations you want.
 
 As my default is web, I add to it:
 
 ```php
 'guards' => [
     'web' => [
-        'driver' => 'keycloak-web',
+        'driver' => 'keycloak',
         'provider' => 'users',
     ],
 
@@ -127,7 +125,7 @@ And change your provider config too:
 'providers' => [
     'users' => [
         'driver' => 'keycloak-users',
-        'model' => Vizir\KeycloakWebGuard\Models\KeycloakUser::class,
+        'model' => Lghs\KeycloakGuard\Models\User::class,
     ],
 
     // ...
@@ -157,7 +155,7 @@ You can use [Laravel Authorization Gate](https://laravel.com/docs/7.x/authorizat
 For example, in your Controller you can check **one role**:
 
 ```php
-if (Gate::denies('keycloak-web', 'manage-account')) {
+if (Gate::denies('keycloak', 'manage-account')) {
   return abort(403);
 }
 ```
@@ -165,7 +163,7 @@ if (Gate::denies('keycloak-web', 'manage-account')) {
 Or **multiple roles**:
 
 ```php
-if (Gate::denies('keycloak-web', ['manage-account'])) {
+if (Gate::denies('keycloak', ['manage-account'])) {
   return abort(403);
 }
 ```
@@ -173,7 +171,7 @@ if (Gate::denies('keycloak-web', ['manage-account'])) {
 And **roles for a resource**:
 
 ```php
-if (Gate::denies('keycloak-web', 'manage-account', 'another-resource')) {
+if (Gate::denies('keycloak', 'manage-account', 'another-resource')) {
   return abort(403);
 }
 ```
@@ -182,15 +180,15 @@ if (Gate::denies('keycloak-web', 'manage-account', 'another-resource')) {
 
 ### Keycloak Can Middleware
 
-If you do not want to use the Gate or already implemented middlewares, you can check user against one or more roles using the `keycloak-web-can` Middleware.
+If you do not want to use the Gate or already implemented middlewares, you can check user against one or more roles using the `keycloak-roles` Middleware.
 
 Add this to your Controller's `__construct` method:
 
 ```php
-$this->middleware('keycloak-web-can:manage-something-cool');
+$this->middleware('keycloak-roles:manage-something-cool');
 
 // For multiple roles, separate with '|'
-$this->middleware('keycloak-web-can:manage-something-cool|manage-something-nice|manage-my-application');
+$this->middleware('keycloak-roles:manage-something-cool|manage-something-nice|manage-my-application');
 ```
 
 This middleware works searching for all roles on default resource (client_id).
@@ -203,7 +201,7 @@ You can extend it and register your own middleware on Kernel.php or just use `Au
 
 We registered a new user provider that you configured on `config/auth.php` called "keycloak-users".
 
-In this same configuration you setted the model. So you can register your own model extending `Vizir\KeycloakWebGuard\Models\KeycloakUser` class and changing this configuration.
+In this same configuration you setted the model. So you can register your own model extending `Lghs\KeycloakGuard\Models\KeycloakUser` class and changing this configuration.
 
 You can implement your own [User Provider](https://laravel.com/docs/5.8/authentication#adding-custom-user-providers): just remember to implement the `retrieveByCredentials` method receiving the Keycloak Profile information to retrieve a instance of model.
 
@@ -217,19 +215,19 @@ There's no login/registration form.
 
 ### How can I protect a route?
 
-Just add the `keycloak-web` middleware:
+Just add the `keycloak` middleware:
 
 ```php
 // On RouteServiceProvider.php for example
 
 Route::prefix('admin')
-  ->middleware('keycloak-web')
+  ->middleware('keycloak')
   ->namespace($this->namespace)
   ->group(base_path('routes/web.php'));
 
 // Or with Route facade in another place
 
-Route::group(['middleware' => 'keycloak-web'], function () {
+Route::group(['middleware' => 'keycloak'], function () {
     Route::get('/admin', 'Controller@admin');
 });
 ```
@@ -287,7 +285,7 @@ In some use cases you may need to override the default Guzzle options - likely e
 
 Every [http://docs.guzzlephp.org/en/stable/request-options.html](Guzzle Request Option) is supported and is passed directly to the Guzzle Client instance.
 
-Just add the options you would like to `guzzle_options` array on `keycloak-web.php` config file. For example:
+Just add the options you would like to `guzzle_options` array on `keycloak.php` config file. For example:
 
 ```
 'guzzle_options' => [
@@ -297,6 +295,7 @@ Just add the options you would like to `guzzle_options` array on `keycloak-web.p
 
 ## Developers
 
+* Duman Haydar [@dumanhaydar](https://twitter.com/dumanhaydar)
 * Mário Valney [@mariovalney](https://twitter.com/mariovalney)
 * [Vizir Software Studio](https://vizir.com.br)
 

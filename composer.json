@@ -1,7 +1,7 @@
 {
-    "name": "vizir/laravel-keycloak-web-guard",
+    "name": "lghs/laravel-keycloak-guard",
     "description": "Simple Keycloak Guard to Laravel Web Routes",
-    "homepage": "https://github.com/Vizir/laravel-keycloak-web-guard",
+    "homepage": "https://github.com/Lghs/laravel-keycloak-guard",
     "license": "MIT",
     "keywords": [
         "laravel",
@@ -10,6 +10,10 @@
         "authentication"
     ],
     "authors": [
+        {
+            "name": "Duman Haydar",
+            "email": "haydar@duman.io"
+        },
         {
             "name": "Mário Valney",
             "email": "mariovalney@gmail.com"
@@ -21,16 +25,16 @@
     },
     "autoload": {
         "psr-4": {
-            "Vizir\\KeycloakWebGuard\\": "src/"
+            "Lghs\\KeycloakGuard\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Vizir\\KeycloakWebGuard\\KeycloakWebGuardServiceProvider"
+                "Lghs\\KeycloakGuard\\KeycloakServiceProvider"
             ],
             "aliases": {
-                "KeycloakWeb": "Vizir\\KeycloakWebGuard\\Facades\\KeycloakWeb"
+                "Keycloak": "Lghs\\KeycloakGuard\\Facades\\Keycloak"
             }
         }
     }

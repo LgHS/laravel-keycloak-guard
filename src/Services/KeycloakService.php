@@ -1,6 +1,6 @@
 <?php
 
-namespace Vizir\KeycloakWebGuard\Services;
+namespace Lghs\KeycloakGuard\Services;
 
 use Exception;
 use GuzzleHttp\ClientInterface;
@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
-use Vizir\KeycloakWebGuard\Auth\KeycloakAccessToken;
-use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
+use Lghs\KeycloakGuard\Auth\AccessToken;
+use Lghs\KeycloakGuard\Auth\Guard\KeycloakGuard;
 
 class KeycloakService
 {
@@ -106,23 +106,23 @@ class KeycloakService
     public function __construct(ClientInterface $client)
     {
         if (is_null($this->baseUrl)) {
-            $this->baseUrl = trim(Config::get('keycloak-web.base_url'), '/');
+            $this->baseUrl = trim(Config::get('keycloak.base_url'), '/');
         }
 
         if (is_null($this->realm)) {
-            $this->realm = Config::get('keycloak-web.realm');
+            $this->realm = Config::get('keycloak.realm');
         }
 
         if (is_null($this->clientId)) {
-            $this->clientId = Config::get('keycloak-web.client_id');
+            $this->clientId = Config::get('keycloak.client_id');
         }
 
         if (is_null($this->clientSecret)) {
-            $this->clientSecret = Config::get('keycloak-web.client_secret');
+            $this->clientSecret = Config::get('keycloak.client_secret');
         }
 
         if (is_null($this->cacheOpenid)) {
-            $this->cacheOpenid = Config::get('keycloak-web.cache_openid', false);
+            $this->cacheOpenid = Config::get('keycloak.cache_openid', false);
         }
 
         if (is_null($this->callbackUrl)) {
@@ -130,7 +130,7 @@ class KeycloakService
         }
 
         if (is_null($this->redirectLogout)) {
-            $this->redirectLogout = Config::get('keycloak-web.redirect_logout');
+            $this->redirectLogout = Config::get('keycloak.redirect_logout');
         }
 
         $this->state = $this->generateRandomState();
@@ -307,7 +307,7 @@ class KeycloakService
         $user = [];
         try {
             // Validate JWT Token
-            $token = new KeycloakAccessToken($credentials);
+            $token = new AccessToken($credentials);
 
             if (empty($token->getAccessToken())) {
                 throw new Exception('Access Token is invalid.');
@@ -550,7 +550,7 @@ class KeycloakService
             return $credentials;
         }
 
-        $token = new KeycloakAccessToken($credentials);
+        $token = new AccessToken($credentials);
         if (! $token->hasExpired()) {
             return $credentials;
         }
