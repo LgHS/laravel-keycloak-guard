@@ -1,21 +1,21 @@
 <?php
 
-namespace Vizir\KeycloakWebGuard\Auth\Guard;
+namespace Lghs\KeycloakGuard\Auth\Guard;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
-use Vizir\KeycloakWebGuard\Auth\KeycloakAccessToken;
-use Vizir\KeycloakWebGuard\Exceptions\KeycloakCallbackException;
-use Vizir\KeycloakWebGuard\Models\KeycloakUser;
-use Vizir\KeycloakWebGuard\Facades\KeycloakWeb;
+use Lghs\KeycloakGuard\Auth\AccessToken;
+use Lghs\KeycloakGuard\Exceptions\CallbackException;
+use Lghs\KeycloakGuard\Models\User;
+use Lghs\KeycloakGuard\Facades\Keycloak;
 use Illuminate\Contracts\Auth\UserProvider;
 
-class KeycloakWebGuard implements Guard
+class KeycloakGuard implements Guard
 {
     /**
-     * @var null|Authenticatable|KeycloakUser
+     * @var null|Authenticatable|User
      */
     protected $user;
 
@@ -105,7 +105,7 @@ class KeycloakWebGuard implements Guard
          * Store the section
          */
         $credentials['refresh_token'] = $credentials['refresh_token'] ?? '';
-        KeycloakWeb::saveToken($credentials);
+        Keycloak::saveToken($credentials);
 
         return $this->authenticate();
     }
@@ -113,23 +113,23 @@ class KeycloakWebGuard implements Guard
     /**
      * Try to authenticate the user
      *
-     * @throws KeycloakCallbackException
      * @return boolean
+     * @throws CallbackException
      */
     public function authenticate()
     {
         // Get Credentials
-        $credentials = KeycloakWeb::retrieveToken();
+        $credentials = Keycloak::retrieveToken();
         if (empty($credentials)) {
             return false;
         }
 
-        $user = KeycloakWeb::getUserProfile($credentials);
+        $user = Keycloak::getUserProfile($credentials);
         if (empty($user)) {
-            KeycloakWeb::forgetToken();
+            Keycloak::forgetToken();
 
             if (Config::get('app.debug', false)) {
-                throw new KeycloakCallbackException('User cannot be authenticated.');
+                throw new CallbackException('User cannot be authenticated.');
             }
 
             return false;
@@ -141,7 +141,7 @@ class KeycloakWebGuard implements Guard
 
         return true;
     }
-    
+
     /**
      * Check user is authenticated and return his resource roles
      *
@@ -152,20 +152,20 @@ class KeycloakWebGuard implements Guard
     public function roles($resource = '')
     {
         if (empty($resource)) {
-            $resource = Config::get('keycloak-web.client_id');
+            $resource = Config::get('keycloak.client_id');
         }
 
         if (! $this->check()) {
             return false;
         }
 
-        $token = KeycloakWeb::retrieveToken();
+        $token = Keycloak::retrieveToken();
 
         if (empty($token) || empty($token['access_token'])) {
             return false;
         }
 
-        $token = new KeycloakAccessToken($token);
+        $token = new AccessToken($token);
         $token = $token->parseAccessToken();
 
         $resourceRoles = $token['resource_access'] ?? [];

@@ -1,12 +1,12 @@
 <?php
 
-namespace Vizir\KeycloakWebGuard\Middleware;
+namespace Lghs\KeycloakWebGuard\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
-use Vizir\KeycloakWebGuard\Exceptions\KeycloakCanException;
+use Lghs\KeycloakWebGuard\Exceptions\KeycloakRolesException;
 
-class KeycloakCan extends KeycloakAuthenticated
+class KeycloakRoles extends KeycloakAuthenticated
 {
     /**
      * Handle an incoming request.
@@ -27,7 +27,7 @@ class KeycloakCan extends KeycloakAuthenticated
             return $next($request);
         }
 
-        throw new KeycloakCanException(
+        throw new KeycloakRolesException(
             'Unauthenticated.', $guards, $this->redirectTo($request)
         );
     }

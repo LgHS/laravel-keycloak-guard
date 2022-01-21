@@ -1,12 +1,12 @@
 <?php
 
-namespace Vizir\KeycloakWebGuard\Controllers;
+namespace Lghs\KeycloakWebGuard\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use Vizir\KeycloakWebGuard\Exceptions\KeycloakCallbackException;
-use Vizir\KeycloakWebGuard\Facades\KeycloakWeb;
+use Lghs\KeycloakWebGuard\Exceptions\KeycloakCallbackException;
+use Lghs\KeycloakWebGuard\Facades\KeycloakWeb;
 
 class AuthController extends Controller
 {
@@ -78,7 +78,7 @@ class AuthController extends Controller
             $token = KeycloakWeb::getAccessToken($code);
 
             if (Auth::validate($token)) {
-                $url = config('keycloak-web.redirect_url', '/admin');
+                $url = config('keycloak.redirect_url', '/admin');
                 return redirect()->intended($url);
             }
         }

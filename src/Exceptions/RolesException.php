@@ -1,8 +1,10 @@
 <?php
 
-namespace Vizir\KeycloakWebGuard\Exceptions;
+namespace Lghs\KeycloakWebGuard\Exceptions;
 
-class KeycloakCallbackException extends \RuntimeException
+use Illuminate\Auth\AuthenticationException;
+
+class KeycloakRolesException extends AuthenticationException
 {
     /**
      * Keycloak Callback Error
@@ -12,10 +14,8 @@ class KeycloakCallbackException extends \RuntimeException
      * @param array           $headers  [description]
      * @param int|integer     $code     [description]
      */
-    public function __construct(string $error = '')
+    public function sss__construct(string $error = '')
     {
-        $message = '[Keycloak Error] ' . $error;
 
-        parent::__construct($message);
     }
 }

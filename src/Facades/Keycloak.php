@@ -1,6 +1,6 @@
 <?php
 
-namespace Vizir\KeycloakWebGuard\Facades;
+namespace Lghs\KeycloakWebGuard\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
@@ -20,6 +20,6 @@ class KeycloakWeb extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'keycloak-web';
+        return 'keycloak';
     }
 }
