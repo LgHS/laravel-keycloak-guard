@@ -47,9 +47,14 @@ return [
     /**
      * Page to redirect after callback if there's no "intent"
      *
-     * @see Vizir\KeycloakWebGuard\Controllers\AuthController::callback()
+     * @see Lghs\KeycloakGuard\Controllers\AuthController::callback()
      */
     'redirect_url' => '/admin',
+
+    /**
+     * Page to redirect after callback if there's no "intent"
+     */
+    'redirect_guest' => 'hello',
 
     /**
      * The routes for authenticate
@@ -58,7 +63,7 @@ return [
      *
      * The routes will receive the name "keycloak.{route}" and login/callback are required.
      * So, if you make it false, you shoul register a named 'keycloak.login' route and extend
-     * the Vizir\KeycloakWebGuard\Controllers\AuthController controller.
+     * the Lghs\Keycloak\Controllers\AuthController controller.
      */
     'routes' => [
         'login' => 'login',

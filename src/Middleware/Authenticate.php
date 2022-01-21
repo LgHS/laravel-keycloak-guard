@@ -1,10 +1,10 @@
 <?php
 
-namespace Lghs\KeycloakWebGuard\Middleware;
+namespace Lghs\KeycloakGuard\Middleware;
 
-use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Auth\Middleware\Authenticate as ExtendedAuthenticate;
 
-class KeycloakAuthenticated extends Authenticate
+class Authenticate extends ExtendedAuthenticate
 {
     /**
      * Redirect user if it's not authenticated.
@@ -14,6 +14,7 @@ class KeycloakAuthenticated extends Authenticate
      */
     protected function redirectTo($request)
     {
-        return route('keycloak.login');
+        $url = config('keycloak.redirect_guest', 'keycloak.login');
+        return route($url);
     }
 }
