@@ -148,7 +148,7 @@ class KeycloakGuard implements Guard
      * @param string $resource Default is empty: point to client_id
      *
      * @return array
-    */
+     */
     public function roles($resource = '')
     {
         if (empty($resource)) {
@@ -186,5 +186,22 @@ class KeycloakGuard implements Guard
     public function hasRole($roles, $resource = '')
     {
         return empty(array_diff((array) $roles, $this->roles($resource)));
+    }
+
+    /**
+     * Check if user has resource access
+     *
+     * @param string $token
+     *
+     * @return boolean
+     */
+    static public function hasResourceAccess($token) {
+        $resource = Config::get('keycloak.client_id');
+
+        $parseToken = new AccessToken($token);
+        $parseToken = $parseToken->parseAccessToken();
+
+        $resourceRoles = $parseToken['resource_access'] ?? [];
+        return $resourceRoles[ $resource ] ?? false;
     }
 }

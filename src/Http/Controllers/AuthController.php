@@ -5,6 +5,8 @@ namespace Lghs\KeycloakGuard\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+use Lghs\KeycloakGuard\Auth\Guard\KeycloakGuard;
 use Lghs\KeycloakGuard\Exceptions\CallbackException;
 use Lghs\KeycloakGuard\Facades\Keycloak;
 
@@ -77,9 +79,12 @@ class AuthController extends Controller
         if (! empty($code)) {
             $token = Keycloak::getAccessToken($code);
 
-            if (Auth::validate($token)) {
+            if (KeycloakGuard::hasResourceAccess($token) && Auth::validate($token)) {
                 $url = config('keycloak.redirect_url', '/admin');
                 return redirect()->intended($url);
+            } else {
+                $url = config('keycloak.redirect_guest', 'keycloak.login');
+                return redirect(route($url));
             }
         }
 
