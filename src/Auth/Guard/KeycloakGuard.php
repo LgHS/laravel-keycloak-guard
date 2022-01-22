@@ -143,17 +143,44 @@ class KeycloakGuard implements Guard
     }
 
     /**
+     * Check user is authenticated and return his realm roles
+     *
+     * @param string $resource Default is empty: point to client_id
+     *
+     * @return array
+     */
+    public function realm_roles()
+    {
+
+        if (! $this->check()) {
+            return false;
+        }
+
+        $token = Keycloak::retrieveToken();
+
+        if (empty($token) || empty($token['access_token'])) {
+            return false;
+        }
+
+        $token = new AccessToken($token);
+        $token = $token->parseAccessToken();
+
+        $realmRoles = $token['realm_access'] ?? [];
+        $realmRoles = $realmRoles['roles'] ?? [];
+
+        return $realmRoles;
+    }
+
+    /**
      * Check user is authenticated and return his resource roles
      *
      * @param string $resource Default is empty: point to client_id
      *
      * @return array
      */
-    public function roles($resource = '')
+    public function resource_roles($prefix = false)
     {
-        if (empty($resource)) {
-            $resource = Config::get('keycloak.client_id');
-        }
+        $resource = Config::get('keycloak.client_id');
 
         if (! $this->check()) {
             return false;
@@ -172,7 +199,38 @@ class KeycloakGuard implements Guard
         $resourceRoles = $resourceRoles[ $resource ] ?? [];
         $resourceRoles = $resourceRoles['roles'] ?? [];
 
+        if($prefix) {
+            foreach($resourceRoles as &$resourceRole) {
+                $resourceRole = $resource.'/'.$resourceRole;
+            }
+        }
         return $resourceRoles;
+    }
+
+    /**
+     * Check user is authenticated and return his resource roles
+     *
+     * @param string $resource Default is empty: point to client_id
+     *
+     * @return array
+     */
+    public function resources()
+    {
+
+        if (! $this->check()) {
+            return false;
+        }
+
+        $token = Keycloak::retrieveToken();
+
+        if (empty($token) || empty($token['access_token'])) {
+            return false;
+        }
+
+        $token = new AccessToken($token);
+        $token = $token->parseAccessToken();
+
+        return $token['resource_access'] ?? [];
     }
 
     /**
@@ -185,7 +243,7 @@ class KeycloakGuard implements Guard
      */
     public function hasRole($roles, $resource = '')
     {
-        return empty(array_diff((array) $roles, $this->roles($resource)));
+        return empty(array_diff((array) $roles, $this->resource_roles($resource)));
     }
 
     /**

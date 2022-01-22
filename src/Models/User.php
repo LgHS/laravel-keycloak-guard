@@ -138,4 +138,49 @@ class User implements Authenticatable
     {
         throw new \BadMethodCallException('Unexpected method [getRememberTokenName] call');
     }
+
+    /**
+     * Get user ressource
+     *
+     * @return array
+     * @codeCoverageIgnore
+     */
+    public function getResources()
+    {
+        return Auth::resources();
+    }
+
+    /**
+     * Get user ressource roles
+     *
+     * @return array
+     * @codeCoverageIgnore
+     */
+    public function getResourceRoles()
+    {
+        return Auth::resource_roles();
+    }
+
+    /**
+     * Get user realm roles
+     *
+     * @return array
+     * @codeCoverageIgnore
+     */
+    public function getRealmRoles()
+    {
+        return Auth::realm_roles();
+    }
+
+    /**
+     * Get user roles
+     *
+     * @return array
+     * @codeCoverageIgnore
+     */
+    public function getAllRoles()
+    {
+
+        return array_merge(Auth::realm_roles(), Auth::resource_roles(true));
+    }
 }
