@@ -13,8 +13,8 @@ It works on front. For APIs we recommend [laravel-keycloak-guard](https://github
 
 This package was tested with:
 
-* Laravel: 5.8 / 7 / 8
-* Keycloak: 4.8.3.Final / 11.0.2
+* Laravel: 5.8 / 7 / 8 / 9
+* Keycloak: 4.8.3.Final / 11.0.2 / 15
 
 Any other version is not guaranteed to work.
 
