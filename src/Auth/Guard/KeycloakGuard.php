@@ -262,4 +262,13 @@ class KeycloakGuard implements Guard
         $resourceRoles = $parseToken['resource_access'] ?? [];
         return $resourceRoles[ $resource ] ?? false;
     }
+
+    /**
+     * Determine if the guard has a user instance.
+     *
+     * @return boolean
+     */
+    public function hasUser() {
+        return ! is_null($this->user);
+    }
 }
