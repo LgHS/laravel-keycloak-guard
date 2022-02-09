@@ -142,6 +142,9 @@ class KeycloakGuard implements Guard
         return true;
     }
 
+    public function roles($prefix = false) {
+        return [...$this->realm_roles(), ...$this->resource_roles($prefix, true)];
+    }
     /**
      * Check user is authenticated and return his realm roles
      *
@@ -178,7 +181,7 @@ class KeycloakGuard implements Guard
      *
      * @return array
      */
-    public function resource_roles($prefix = false)
+    public function resource_roles($prefix = false, $all = false)
     {
         $resource = Config::get('keycloak.client_id');
 
@@ -196,14 +199,27 @@ class KeycloakGuard implements Guard
         $token = $token->parseAccessToken();
 
         $resourceRoles = $token['resource_access'] ?? [];
-        $resourceRoles = $resourceRoles[ $resource ] ?? [];
-        $resourceRoles = $resourceRoles['roles'] ?? [];
+        if($all) {
+            $roles = [];
+            foreach($resourceRoles as $resource => $resources) {
+                if(isset($resources['roles'])) {
+                    foreach($resources['roles'] as $resourceRole) {
+                        $roles[] = $resource.'/'.$resourceRole;
+                    }
+                }
+            }
+            $resourceRoles = $roles;
+        } else {
+            $resourceRoles = $resourceRoles[ $resource ] ?? [];
+            $resourceRoles = $resourceRoles['roles'] ?? [];
 
-        if($prefix) {
-            foreach($resourceRoles as &$resourceRole) {
-                $resourceRole = $resource.'/'.$resourceRole;
+            if($prefix) {
+                foreach($resourceRoles as &$resourceRole) {
+                    $resourceRole = $resource.'/'.$resourceRole;
+                }
             }
         }
+
         return $resourceRoles;
     }
 
