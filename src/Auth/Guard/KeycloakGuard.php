@@ -276,7 +276,7 @@ class KeycloakGuard implements Guard
         $parseToken = $parseToken->parseAccessToken();
 
         $resourceRoles = $parseToken['resource_access'] ?? [];
-        return $resourceRoles[ $resource ] ?? false;
+        return $resourceRoles[ $resource ] ?? abort(403, 'Access denied');
     }
 
     /**
